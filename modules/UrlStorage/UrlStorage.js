@@ -15,7 +15,7 @@ class LocalStorage {
         fs.writeFileSync(`${fileName}.txt`, data, {flag: 'w'});
     }
 
-    static removeItems(fileName) {
+    static removeItem(fileName) {
         fs.unlinkSync(`${fileName}.txt`);
     }
 }
