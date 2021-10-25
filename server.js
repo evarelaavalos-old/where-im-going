@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const destinationUrl = 'https://www.google.com/';
 const screenshotPath = 'screenshots';
+let textToSearch = 'beautiful corgi puppies';
 
 (async () => {
     try {
@@ -10,11 +11,16 @@ const screenshotPath = 'screenshots';
         
         // Searching in Google Main Page
         const googleSearchEl = await page.$('input[type=\"text\"]');
-        await googleSearchEl.type('some other text');
-        await googleSearchEl.press('Enter'); // <- This line didn't work
+        await googleSearchEl.type(textToSearch);
+        await googleSearchEl.press('Enter');
         await page.waitForNavigation();
-
-        await page.screenshot({path: `${screenshotPath}/buddy-screenshot.png`});
+        
+        // Moving to the second result page
+        const nextPageEl = await page.$('a#pnnext');
+        await nextPageEl.click();
+        await page.waitForNavigation();
+        
+        await page.screenshot({path: `${screenshotPath}/buddy-screenshot.png`, fullPage: true});
 
         await browser.close();
     } catch (err) {
