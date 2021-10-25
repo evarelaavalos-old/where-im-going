@@ -1,17 +1,22 @@
-const fs = require('fs/promises');
+const fs = require('fs');
 const URL_STORAGE_KEY = 'foundedGoogleURL';
 
 class LocalStorage {
-    static getItems() {
-        
+    static getItem(fileName) {
+        try {
+            const data = fs.readFileSync(`${fileName}.txt`, {flag: 'r'});
+            return data.toString();
+        } catch(err) {
+            return undefined;
+        }
     }
 
-    static setItems() {
-
+    static setItem(fileName, data) {
+        fs.writeFileSync(`${fileName}.txt`, data, {flag: 'w'});
     }
 
-    static removeItems() {
-
+    static removeItems(fileName) {
+        fs.unlinkSync(`${fileName}.txt`);
     }
 }
 
@@ -27,7 +32,7 @@ class UrlStorage {
         sorted = false,
     } = {}) {
         try {
-            let storedUrlsString = localStorage.getItem(URL_STORAGE_KEY);
+            let storedUrlsString = LocalStorage.getItem(URL_STORAGE_KEY);
             let storedUrls = !storedUrlsString ? [] : [...storedUrlsString.split(',')];
 
             if (normalized) {
@@ -67,7 +72,7 @@ class UrlStorage {
             if (updatedUrls) updatedUrls += ',';
             updatedUrls += url;
 
-            localStorage.setItem(URL_STORAGE_KEY, updatedUrls);
+            LocalStorage.setItem(URL_STORAGE_KEY, updatedUrls);
         }
         catch (err) {
             console.error(err);
@@ -93,7 +98,7 @@ class UrlStorage {
                 if (updatedUrls) updatedUrls += ',';
                 updatedUrls += urls.join();
 
-                localStorage.setItem(URL_STORAGE_KEY, updatedUrls);
+                LocalStorage.setItem(URL_STORAGE_KEY, updatedUrls);
             }
         }
         catch (err) {
@@ -126,7 +131,7 @@ class UrlStorage {
      */
     static clearUrls() {
         try {
-            localStorage.removeItem(URL_STORAGE_KEY);
+            LocalStorage.removeItem(URL_STORAGE_KEY);
         }
         catch (err) {
             console.error(err);
@@ -147,3 +152,7 @@ class UrlStorage {
         return normalizedUrl;
     }
 }
+
+module.exports = {
+    UrlStorage
+};
