@@ -127,3 +127,6 @@ dist
 
 # Local History for Visual Studio Code
 .history/
+
+# Puppeteer Screenshots Folder
+screenshots/
