@@ -17,18 +17,25 @@ let textToSearch = 'beautiful corgi puppies';
         await googleSearchEl.press('Enter');
         await page.waitForNavigation();
         
-        // Getting the URLS from the page
-        const urls = await page.evaluate(() => {
-            let googleResults = document.querySelectorAll('.g a');
-            let googleResultsWithHref = [...googleResults].filter(element => element.getAttribute('onmousedown'));
-            return googleResultsWithHref.map(element => element.getAttribute('href'));
-        })
-        UrlStorage.saveUrls(urls);
+        
+        const lastPageNumber = 10;
+        for (let pageNumber = 1; pageNumber <= lastPageNumber; pageNumber++) {
+            // Getting the URLS from the page
+            const urls = await page.evaluate(() => {
+                let googleResults = document.querySelectorAll('.g a');
+                let googleResultsWithHref = [...googleResults].filter(element => element.getAttribute('onmousedown'));
+                return googleResultsWithHref.map(element => element.getAttribute('href'));
+            })
+            UrlStorage.saveUrls(urls);
 
-        // Moving to the second result page
-        // let nextPageEl = await page.$('a#pnnext');
-        // await nextPageEl.click();
-        // await page.waitForNavigation();
+            // Getting the Next Button
+            let nextPageEl = await page.$('a#pnnext');
+
+            if (!nextPageEl) break;
+
+            await nextPageEl.click();
+            await page.waitForNavigation();
+        }
         
         await page.screenshot({path: `${screenshotPath}/buddy-screenshot.png`, fullPage: true});
 
