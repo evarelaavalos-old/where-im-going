@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const destinationUrl = 'https://www.google.com/';
 const screenshotPath = 'screenshots';
 let textToSearch = 'beautiful corgi puppies';
+textToSearch = 'Saracatunga';
 
 (async () => {
     try {
@@ -16,9 +17,13 @@ let textToSearch = 'beautiful corgi puppies';
         await page.waitForNavigation();
         
         // Moving to the second result page
-        const nextPageEl = await page.$('a#pnnext');
-        await nextPageEl.click();
-        await page.waitForNavigation();
+        let nextPageEl = await page.$('a#pnnext');
+        while (nextPageEl) {
+            await nextPageEl.click();
+            await page.waitForNavigation();
+            
+            nextPageEl = await page.$('a#pnnext');
+        }
         
         await page.screenshot({path: `${screenshotPath}/buddy-screenshot.png`, fullPage: true});
 
