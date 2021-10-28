@@ -1,10 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const URL_STORAGE_KEY = 'foundedGoogleURL';
 
 class LocalStorage {
+    constructor() {
+        this.filePath = path.join(__dirname, '..', '..', 'temp', 'googlesearchs');
+    }
+
     static getItem(fileName) {
         try {
-            const data = fs.readFileSync(`${fileName}.txt`, {flag: 'r'});
+            const data = fs.readFileSync(path.join(this.getFilePath(), `${fileName}.txt`), {flag: 'r'});
             return data.toString();
         } catch(err) {
             return undefined;
@@ -12,11 +17,15 @@ class LocalStorage {
     }
 
     static setItem(fileName, data) {
-        fs.writeFileSync(`${fileName}.txt`, data, {flag: 'w'});
+        fs.writeFileSync(path.join(this.getFilePath(), `${fileName}.txt`), data, {flag: 'w'});
     }
 
     static removeItem(fileName) {
-        fs.unlinkSync(`${fileName}.txt`);
+        fs.unlinkSync(path.join(this.getFilePath(), `${fileName}.txt`));
+    }
+
+    static getFilePath() {
+        return path.join(__dirname, '..', '..', 'temp', 'googlesearchs');
     }
 }
 

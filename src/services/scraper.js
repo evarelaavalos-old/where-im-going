@@ -2,9 +2,12 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const UrlStorage = require('./UrlStorage.js');
 
-async function scrapeGoogle() {
+async function scrapeGoogle(screenshotPath) {
+    if (!screenshotPath) {
+        throw new Exception('The screenshot path is required.');
+    }
+        
     const destinationUrl = 'https://www.google.com/';
-    const screenshotPath = path.join(__dirname, '..', '..', 'temp', 'screenshots');
     let textToSearch = 'beautiful corgi puppies';
 
     try {
