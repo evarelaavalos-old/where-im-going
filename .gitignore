@@ -129,4 +129,4 @@ dist
 .history/
 
 # Puppeteer Screenshots Folder
-screenshots/
+temp/

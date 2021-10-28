@@ -153,6 +153,4 @@ class UrlStorage {
     }
 }
 
-module.exports = {
-    UrlStorage
-};
+module.exports = UrlStorage;
