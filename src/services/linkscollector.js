@@ -71,14 +71,7 @@ class LinksCollectorService {
 
         if (uniqueValues) {
             const isFirstAppearance = function(value, index, self) {
-                // let isUnique = true;
                 let isFirstAppearance = true;
-            
-                // Check if is unique by url
-                // self.forEach((cloneValue, cloneIndex) => {
-                //     if (index != cloneIndex && value.url == cloneValue.url)
-                //         isUnique = false;
-                // })
             
                 // Check if there is a duplicate behind on the array
                 self.slice(0, index).forEach((cloneValue, cloneIndex) => {
@@ -86,7 +79,6 @@ class LinksCollectorService {
                         isFirstAppearance = false;
                 })
             
-                // return isUnique || isFirstAppearance;
                 return isFirstAppearance;
             }
             
@@ -133,28 +125,6 @@ class LinksCollectorService {
     _duplicateLinks(plainObject = false) {
         let duplicatedLinks = [];
         let duplicatedLinksObj = JSON.parse(JSON.stringify(this.links));
-
-        // for (let obj of duplicatedLinksObj) {
-        //     let newObject = {
-        //         resultIndex: obj.resultIndex,
-        //         resultPage: obj.resultPage,
-        //         url: obj._url.fullPath,
-        //     };
-
-        //     if (plainObject) duplicatedLinks.push(newObject)
-        //     else duplicatedLinks.push(new GoogleLink(newObject.resultIndex))
-        //         googleLink = {
-        //             resultIndex,
-        //             resultPage,
-        //             _url.fullPath,
-        //         };
-        //     }
-        //     let googleLink = new GoogleLink(resultIndex, resultPage, _url.fullPath);
-
-        //     duplicatedLinks.push(googleLink);
-        // }
-
-        // return duplicatedLinks;
 
         for (let {resultIndex, resultPage, _url: { fullPath }} of duplicatedLinksObj) {
             if (plainObject) {
