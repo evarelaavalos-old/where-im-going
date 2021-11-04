@@ -98,7 +98,15 @@ class LinksCollectorService {
 
     saveLink(link) {
         // TODO A bit of typechecking;
-        this.links.push(link);
+        if (link instanceof GoogleLink) {
+            this.links.push(link);
+        } else if (typeof link == "object" && link.hasOwnProperty('resultIndex') &&
+            link.hasOwnProperty('resultPage') && link.hasOwnProperty('url')) {
+            let googleLink = new GoogleLink(link.resultIndex, link.resultPage, link.url);
+            this.links.push(googleLink);
+        } else {
+            throw new Error('The given parameter to saveLink() is not a valid Object');
+        }
     }
 
     export(pathToExport = __dirname, {
