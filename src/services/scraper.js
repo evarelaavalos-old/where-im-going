@@ -6,7 +6,7 @@ async function scrapeGoogle(screenshotPath) {
     if (!screenshotPath) {
         throw new Exception('The screenshot path is required.');
     }
-        
+    
     const destinationUrl = 'https://www.google.com/';
     let textToSearch = 'beautiful corgi puppies';
 
@@ -51,4 +51,50 @@ async function scrapeGoogle(screenshotPath) {
     }
 }
 
-module.exports = scrapeGoogle;
+class GoogleScraper {
+    constructor(query) {
+        this.query = query;
+        this._googleUrl = 'https://www.google.com/';
+        this._browser;
+        this._page;
+        // this._init();
+    }
+
+    async _init() {
+        try {
+            // Initializing Chrome Sandbox
+            this._browser = await puppeteer.launch();
+            this._page = await this._browser.newPage();
+
+            // Navigating to Google (main page)
+            await this._page.goto(this._googleUrl);
+            
+            // Typing a Query
+            const googleSearchEl = await this._page.$('input[type=\"text\"]');
+            await googleSearchEl.type(this.query);
+            await googleSearchEl.press('Enter');
+            await this._page.waitForNavigation();
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    async takeScreenshot(screenshotPath) {
+        let screenshotName = `Screenshot-03112021.png`;
+        await this._page.screenshot({
+            path: path.join(screenshotPath, screenshotName),
+            fullPage: true,
+        })
+
+        return path.join(screenshotPath, screenshotName);
+    }
+
+    async close() {
+        await this._browser.close();
+    }
+}
+
+module.exports = {
+    scrapeGoogle,
+    GoogleScraper,
+};
