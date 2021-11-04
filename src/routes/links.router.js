@@ -4,6 +4,6 @@ const linksController = require('../controllers/links.controller');
 
 const linksRouter = express.Router();
 
-linksRouter.get('/', linksController.getLinks);
+linksRouter.get('/:query', linksController.getLinks);
 
 module.exports = linksRouter;

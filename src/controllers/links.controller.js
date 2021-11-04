@@ -4,13 +4,18 @@ const GoogleScraper = require('../services/scraper.js');
 
 async function getLinks(req, res) {
     try {
+        if (!req.params.query) {
+            return res.status(400).json({
+                error: 'Missing Query',
+            })
+        }
         // Initializa the Google Scraper
-        const SEARCH = 'beautiful corgi puppies';
+        const SEARCH = req.params.query.replace('-', ' ');
         const scraper = new GoogleScraper(SEARCH);
         await scraper.init();
 
         // Start saving links
-        const PAGES_TO_SCRAPE = 10;
+        const PAGES_TO_SCRAPE = 5;
         for (let actualPage = 1; actualPage <= PAGES_TO_SCRAPE; actualPage++) {
             await scraper.saveLinks();
             try { await scraper.moveToNextPage(); } catch (err) { break; }
