@@ -84,7 +84,7 @@ class GoogleScraper {
 
     async saveLinks() {
         // TODO Search an alternative to the method .evaluate()
-        await this._page.evaluate(() => {
+        let validResultsUrls = await this._page.evaluate(() => {
             // TODO There is some Google Suggestions that this
             // formula takes the links too. Fix it to not take that links.
             const isValidResult = (element) => {
@@ -93,18 +93,21 @@ class GoogleScraper {
                     (element.firstChild.tagName == "BR");
             }
 
-            // [...document.querySelectorAll('.g a')].filter(isValidResult)
             let results = [...document.querySelectorAll('.g a')];
             let onlyValidResults = results.filter(isValidResult);
 
-            onlyValidResults.reduce((resultNumber, element) => {
-                console.log(`The result number is ${resultNumber} `)
-                console.log(`and the url is ${element.getAttribute('href')}`);
-                console.log(this);
-
-                return resultNumber + 1;
-            }, 1)
+            return onlyValidResults.map(el => el.getAttribute('href'));
         })
+
+        const saveGoogleLink = (url, urlIndex) => {
+            this.collector.saveLink({
+                resultIndex: urlIndex + 1,
+                resultPage: this._actualPage,
+                url: url,
+            });
+        }
+
+        validResultsUrls.forEach(saveGoogleLink, this);
     }
 
     async moveToNextPage() {

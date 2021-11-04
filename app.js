@@ -11,16 +11,29 @@ app.get('/', express.static(path.join('src', 'public')));
 
 app.get('/api/links', async (req, res) => {
     try {
-        const scraper = new GoogleScraper('beautiful corgi puppies');
+        // Initializa the Google Scraper
+        const SEARCH = 'beautiful corgi puppies';
+        const scraper = new GoogleScraper(SEARCH);
         await scraper.init();
-        await scraper.moveToNextPage();
+
+        // Start saving links
+        const PAGES_TO_SCRAPE = 10;
+        for (let actualPage = 1; actualPage <= PAGES_TO_SCRAPE; actualPage++) {
+            await scraper.saveLinks();
+            try { await scraper.moveToNextPage(); } catch(err) { break; }
+        }
     
+        // Take screenshot of the last page
         let exportPath = path.join(__dirname, 'temp', 'screenshots');
-        let file = await scraper.takeScreenshot(exportPath);
+        await scraper.takeScreenshot(exportPath);
     
+        // Close the scraper
         scraper.close();
 
-        res.sendFile(file);
+        // Response with the scraped links
+        let options = {};
+        let savedLinks = scraper.collector.getLinks(options);
+        res.json(savedLinks);
     } catch (err) {
         console.error(err);
         res.sendStatus(500);
