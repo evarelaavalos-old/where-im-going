@@ -55,12 +55,9 @@ class GoogleScraper {
     constructor(query) {
         this.query = query;
         this._googleUrl = 'https://www.google.com/';
-        this._browser;
-        this._page;
-        // this._init();
     }
-
-    async _init() {
+    
+    async init() {
         try {
             // Initializing Chrome Sandbox
             this._browser = await puppeteer.launch();
@@ -77,6 +74,19 @@ class GoogleScraper {
         } catch(err) {
             console.error(err);
         }
+    }
+
+    async saveLinks() {
+
+    }
+
+    async moveToNextPage() {
+        let nextPageButton = await this._page.$('a#pnnext');
+
+        if (!nextPageButton) throw new Error('We couldn\'t find the next button.');
+
+        await nextPageButton.click();
+        await this._page.waitForNavigation();
     }
 
     async takeScreenshot(screenshotPath) {

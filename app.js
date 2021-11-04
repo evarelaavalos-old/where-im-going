@@ -12,7 +12,8 @@ app.get('/', express.static(path.join('src', 'public')));
 app.get('/api/links', async (req, res) => {
     try {
         const scraper = new GoogleScraper('beautiful corgi puppies');
-        await scraper._init();
+        await scraper.init();
+        await scraper.moveToNextPage();
     
         let exportPath = path.join(__dirname, 'temp', 'screenshots');
         let file = await scraper.takeScreenshot(exportPath);
