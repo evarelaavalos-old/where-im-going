@@ -1,6 +1,7 @@
 const path = require('path');
 const puppeteer = require('puppeteer');
 const UrlStorage = require('./UrlStorage.js');
+const { LinksCollectorService } = require('./linkscollector.js');
 
 async function scrapeGoogle(screenshotPath) {
     if (!screenshotPath) {
@@ -54,7 +55,10 @@ async function scrapeGoogle(screenshotPath) {
 class GoogleScraper {
     constructor(query) {
         this.query = query;
+        // TODO Make "collector" private and create an interface to manipulate it
+        this.collector = new LinksCollectorService();
         this._googleUrl = 'https://www.google.com/';
+        this._actualPage = -1;
     }
     
     async init() {
@@ -71,13 +75,36 @@ class GoogleScraper {
             await googleSearchEl.type(this.query);
             await googleSearchEl.press('Enter');
             await this._page.waitForNavigation();
+
+            this._actualPage = 1;
         } catch(err) {
             console.error(err);
         }
     }
 
     async saveLinks() {
+        // TODO Search an alternative to the method .evaluate()
+        await this._page.evaluate(() => {
+            // TODO There is some Google Suggestions that this
+            // formula takes the links too. Fix it to not take that links.
+            const isValidResult = (element) => {
+                return element.getAttribute('onmousedown') &&
+                    (element.childElementCount == 3) &&
+                    (element.firstChild.tagName == "BR");
+            }
 
+            // [...document.querySelectorAll('.g a')].filter(isValidResult)
+            let results = [...document.querySelectorAll('.g a')];
+            let onlyValidResults = results.filter(isValidResult);
+
+            onlyValidResults.reduce((resultNumber, element) => {
+                console.log(`The result number is ${resultNumber} `)
+                console.log(`and the url is ${element.getAttribute('href')}`);
+                console.log(this);
+
+                return resultNumber + 1;
+            }, 1)
+        })
     }
 
     async moveToNextPage() {
@@ -87,6 +114,8 @@ class GoogleScraper {
 
         await nextPageButton.click();
         await this._page.waitForNavigation();
+
+        this._actualPage++;
     }
 
     async takeScreenshot(screenshotPath) {
