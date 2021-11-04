@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const { scrapeGoogle, GoogleScraper } = require('./src/services/scraper.js');
+const GoogleScraper = require('./src/services/scraper.js');
 
 const app = express();
 
