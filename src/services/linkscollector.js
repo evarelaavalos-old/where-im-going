@@ -29,9 +29,9 @@ class Url {
 }
 
 class GoogleLink {
-    constructor(resultIndex, resultPage, url) {
-        this.resultIndex = resultIndex;
-        this.resultPage = resultPage;
+    constructor(page, index, url) {
+        this.page = page;
+        this.index = index;
         this.url = url;
     }
 
@@ -63,9 +63,11 @@ class LinksCollectorService {
         let links = this._duplicateLinks(true);
 
         if (normalized) {
-            links = links.map(link => {
-                let {resultIndex, resultPage, url} = link;
-                return {resultIndex, resultPage, url: Url.normalize(url)};
+            links = links.map(({url, ...otherProperties}) => {
+                return {
+                    ...otherProperties,
+                    url: Url.normalize(url),
+                }
             });
         }
 
@@ -97,15 +99,8 @@ class LinksCollectorService {
     }
 
     saveLink(link) {
-        // TODO A bit of typechecking;
-        if (link instanceof GoogleLink) {
-            this.links.push(link);
-        } else if (typeof link == "object" && link.hasOwnProperty('resultIndex') &&
-            link.hasOwnProperty('resultPage') && link.hasOwnProperty('url')) {
-            let googleLink = new GoogleLink(link.resultIndex, link.resultPage, link.url);
-            this.links.push(googleLink);
-        } else {
-            throw new Error('The given parameter to saveLink() is not a valid Object');
+        if (this._isInstanceOfGoogleLink(link)) {
+            this.links.push(new GoogleLink(link.page, link.index, link.url));
         }
     }
 
@@ -130,23 +125,28 @@ class LinksCollectorService {
         }
     }
 
+    _isInstanceOfGoogleLink(object) {
+        if (object instanceof GoogleLink) {
+            return true;
+        }
+
+        if ((typeof object == "object") && object.hasOwnProperty('page')
+        && object.hasOwnProperty('index') && object.hasOwnProperty('url')) {
+            return true;
+        }
+
+        return false;
+    }
+
     _duplicateLinks(plainObject = false) {
         let duplicatedLinks = [];
         let duplicatedLinksObj = JSON.parse(JSON.stringify(this.links));
 
-        for (let {resultIndex, resultPage, _url: { fullPath }} of duplicatedLinksObj) {
+        for (let { page, index, _url: { fullPath: url } } of duplicatedLinksObj) {
             if (plainObject) {
-                duplicatedLinks.push({
-                    resultIndex: resultIndex,
-                    resultPage: resultPage,
-                    url: fullPath,
-                });
+                duplicatedLinks.push({ page, index, url });
             } else {
-                duplicatedLinks.push(new GoogleLink(
-                    resultIndex,
-                    resultPage,
-                    fullPath
-                ));
+                duplicatedLinks.push(new GoogleLink(page, index, url));
             }
         }
 

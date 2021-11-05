@@ -51,8 +51,8 @@ class GoogleScraper {
 
         const saveGoogleLink = (url, urlIndex) => {
             this.collector.saveLink({
-                resultIndex: urlIndex + 1,
-                resultPage: this._actualPage,
+                page: this._actualPage,
+                index: urlIndex + 1,
                 url: url,
             });
         }
