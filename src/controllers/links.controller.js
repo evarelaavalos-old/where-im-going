@@ -9,9 +9,11 @@ async function getLinks(req, res) {
                 error: 'Missing Query',
             })
         }
+        
         // Initializa the Google Scraper
-        const SEARCH = req.params.query.replace('-', ' ');
-        const scraper = new GoogleScraper(SEARCH);
+        const search = req.params.query.replace('-', ' ');
+        console.log(search);
+        const scraper = new GoogleScraper(search);
         await scraper.init();
 
         // Start saving links

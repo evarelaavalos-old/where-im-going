@@ -17,7 +17,7 @@ body {
     text-align: center;
 }
 
-h1.main-text {
+.main-text {
     color: #333;
     font-size: 3rem;
     font-weight: bold;
@@ -25,32 +25,33 @@ h1.main-text {
     margin-bottom: 1.25em;
 }
 
-.flex-center {
+#form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.search-bar {
-    border-radius: 20px;
+#form > * {
     margin: 1.5em 0;
-    padding: 1em 2em;
-    min-width: min(90%, 40rem);
-    border: 1px solid #aaa;
 }
 
-.search-button {
+#form > .search-bar {
+    padding: 1em 2em;
+    min-width: min(100%, 40rem);
+    border: 1px solid #aaa;
+    border-radius: 20px;
+}
+
+#form > .search-button {
     color: white;
     font-size: 1rem;
-    font-weight: thin;
+    padding: 0.75rem 1.35rem;
     background-color: #2F86A6;
     border: 1px solid #2F86A6;
     border-radius: 5px;
-    margin: 1.5em 0;
-    padding: 0.75rem 1.35rem;
 }
 
-.search-button:hover {
+#form > .search-button:hover {
     background-color: #194657;
     border: 1px solid #194657;
 }

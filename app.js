@@ -7,6 +7,11 @@ const app = express();
 
 const PORT = 3000;
 
+app.use((req, res, next) => {
+    console.log(`Incoming ${req.method} request at ${req.url}`);
+    next();
+})
+
 app.use('/api/links', linksRouter);
 
 app.use('/', express.static(path.join(__dirname, 'src', 'public')));
