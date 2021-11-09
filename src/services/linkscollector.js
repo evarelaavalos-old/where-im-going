@@ -104,8 +104,9 @@ class LinksCollectorService {
         }
     }
 
-    export(pathToExport = __dirname, {
-        // plainObject = false,
+    export({
+        fileName = 'dummy',
+        pathToExport = __dirname,
         normalized = false,
         uniqueValues = false,
         sorted = false,
@@ -113,13 +114,22 @@ class LinksCollectorService {
     } = {}) {
         let links = this.getLinks({ normalized, uniqueValues, sorted, onlyUrls });
 
-        let linksAsJSON = JSON.stringify(links);
-
+        let plainTextFile = JSON.stringify(links)
+            .replace(/\,/g, '\r\n')
+            .replace(/\[/g, '')
+            .replace(/\]/g, '')
+            .replace(/\{/g, '')
+            .replace(/\}/g, '')
+            .replace(/\"/g, '');
+        
+        let jsonFile = JSON.stringify(links);
+        
         // TODO Add the option to export as plain text or csv
         // TODO rename the file as the linkscollectorservice query
         // TODO add the date when export and the 'minified' string added
         try {
-            fs.writeFileSync(path.join(pathToExport, `dummy.json`), linksAsJSON, {flag: 'w'});
+            fs.writeFileSync(path.join(pathToExport, `${fileName}.txt`), plainTextFile, {flag: 'w'});
+            fs.writeFileSync(path.join(pathToExport, `${fileName}.json`), jsonFile, {flag: 'w'});
         } catch(err) {
             console.error(err);
         }

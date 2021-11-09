@@ -71,8 +71,8 @@ class GoogleScraper {
         this._actualPage++;
     }
 
-    async takeScreenshot(screenshotPath) {
-        let screenshotName = `Screenshot-03112021.png`;
+    async takeScreenshot(screenshotPath, fileName = 'Screenshot-03112021') {
+        let screenshotName = `${fileName}.png`;
         await this._page.screenshot({
             path: path.join(screenshotPath, screenshotName),
             fullPage: true,

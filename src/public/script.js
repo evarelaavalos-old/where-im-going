@@ -24,7 +24,7 @@ function validateSearch(input) {
 }
 
 function getParsedSearch(input) {
-    return input.value.replace(' ', '-');
+    return input.value.replaceAll(' ', '-');
 }
 
 form.addEventListener('submit', (event) => {
