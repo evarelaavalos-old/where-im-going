@@ -1,4 +1,5 @@
 const searchForm = document.getElementById('search-form');
+const toggleButton = document.querySelector('.optional-settings__toggle');
 
 function hasValue(input) {
     if (input.value.trim() === "") {
@@ -44,4 +45,8 @@ searchForm.addEventListener('submit', (event) => {
         console.log(`GET request at ${event.target.action}`);
         searchForm.submit();
     }
+})
+
+toggleButton.addEventListener('click', (event) => {
+    event.currentTarget.classList.toggle('active');
 })

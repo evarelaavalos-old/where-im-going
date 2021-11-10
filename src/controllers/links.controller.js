@@ -10,15 +10,24 @@ async function getLinks(req, res) {
             })
         }
         
-        // Initializa the Google Scraper
+        // Logging the Incoming Request
+        console.log('Query String: ', req.query);
+
+        // Process the query string
+        const DEFAULT_PAGES_TO_SCRAPE = 5;
+        const settings = parseSettings(req.query);
+
+        // Process and Log the search
         const search = req.params.query.replace(/\-/g, ' ');
         console.log(search);
+
+        // Initialize the Google Scraper
         const scraper = new GoogleScraper(search);
         await scraper.init();
 
         // Start saving links
-        const PAGES_TO_SCRAPE = 10;
-        for (let actualPage = 1; actualPage < PAGES_TO_SCRAPE; ++actualPage) {
+        const pagesToScrape = settings.pages ?? DEFAULT_PAGES_TO_SCRAPE;
+        for (let actualPage = 1; actualPage < pagesToScrape; ++actualPage) {
             await scraper.saveLinks();
             try { await scraper.moveToNextPage(); } catch (err) { break; }
         }
@@ -32,11 +41,12 @@ async function getLinks(req, res) {
 
         // Response with the scraped links
         // TODO Provide a way in the API to change this options. (Hard Code)
+        // TODO removeProtocol, removePath
         let options = {
-            normalized: false,
-            uniqueValues: true,
-            sorted: true,
-            onlyUrls: true,
+            normalized: settings.normalize,
+            uniqueValues: settings.unique,
+            sorted: settings.sort,
+            onlyUrls: settings.onlyurls,
         };
         
         let savedLinks = scraper.collector.getLinks(options);
@@ -53,6 +63,20 @@ async function getLinks(req, res) {
         console.error(err);
         res.sendStatus(500);
     }
+}
+
+function parseSettings(query) {
+    for (const [key, value] of Object.entries(query)) {
+        if (key === 'pages') {
+            query[key] = Number(value);
+        } else if (value === 'on') {
+            query[key] = true;
+        } else if (value === 'off') {
+            query[key] = false;
+        }
+    }
+
+    return query;
 }
 
 module.exports = {
