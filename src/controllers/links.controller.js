@@ -41,9 +41,9 @@ async function getLinks(req, res) {
 
         // Response with the scraped links
         // TODO Provide a way in the API to change this options. (Hard Code)
-        // TODO removeProtocol, removePath
         let options = {
-            normalized: settings.normalize,
+            removeProtocol: settings.rmprotocol,
+            removeProtocolAndPath: settings.rmprotocolandpath,
             uniqueValues: settings.unique,
             sorted: settings.sort,
             onlyUrls: settings.onlyurls,

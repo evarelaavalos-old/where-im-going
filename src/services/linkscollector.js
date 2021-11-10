@@ -6,6 +6,7 @@ class Url {
         this.fullPath = fullPath;
     }
 
+    // Deprecated, only for backward compatibility
     static normalize(url) {
         let matchProtocolRegex = /^https?:\/\/w?w?w?\.?/gm;
         let normalizedUrl = url.replace(matchProtocolRegex, '');
@@ -20,6 +21,26 @@ class Url {
         return normalizedUrl;
     }
 
+    static removeProtocol(url) {
+        let matchProtocolRegex = /^https?:\/\/w?w?w?\.?/gm;
+        let urlWithoutProtocol = url.replace(matchProtocolRegex, '');
+
+        return urlWithoutProtocol;
+    }
+
+    static removeProtocolAndPath(url) {
+        let matchProtocolRegex = /^https?:\/\/w?w?w?\.?/gm;
+        let normalizedUrl = url.replace(matchProtocolRegex, '');
+
+        //assuming the protocol was removed.
+        //remove the URL path, the string of information that comes after the top level domain name.
+        //youtube.com/watch?v=dQw4w9WgXcQ -> youtube.com
+        if (normalizedUrl.includes('/')) {
+            normalizedUrl = normalizedUrl.substring(0, normalizedUrl.indexOf('/'));
+        }
+
+        return normalizedUrl;
+    }
     // TODO
     // get fullPath() {}
     // check typeof 'string'
@@ -54,70 +75,78 @@ class LinksCollectorService {
     // collector.getLinks({ normalized: true, onlyUrls: true });
     // returns a copy of the object
     getLinks({
-        // plainObject = false,
-        normalized = false,
+        removeProtocol = false,
+        removeProtocolAndPath = false,
         uniqueValues = false,
         sorted = false,
         onlyUrls = false,
     } = {}) {
         let links = this._duplicateLinks(true);
-
-        if (normalized) {
+        
+        if (removeProtocolAndPath) {
             links = links.map(({url, ...otherProperties}) => {
                 return {
                     ...otherProperties,
-                    url: Url.normalize(url),
+                    url: Url.removeProtocolAndPath(url),
+                }
+            });
+        } else if (removeProtocol) {
+            links = links.map(({url, ...otherProperties}) => {
+                return {
+                    ...otherProperties,
+                    url: Url.removeProtocol(url),
                 }
             });
         }
-
+        
         if (uniqueValues) {
             const isFirstAppearance = function(value, index, self) {
                 let isFirstAppearance = true;
-            
+                
                 // Check if there is a duplicate behind on the array
                 self.slice(0, index).forEach((cloneValue, cloneIndex) => {
                     if(value.url == cloneValue.url)
-                        isFirstAppearance = false;
+                    isFirstAppearance = false;
                 })
-            
+                
                 return isFirstAppearance;
             }
             
             links = links.filter(isFirstAppearance);
         }
-
+        
         if (sorted) {
             links.sort((firstEl, secondEl) => firstEl.url < secondEl.url);
         }
-
+        
         if (onlyUrls) {
             links = links.map(link => link.url);
         }
-
+        
         return links;
     }
-
+    
     saveLink(link) {
         if (this._isInstanceOfGoogleLink(link)) {
             this.links.push(new GoogleLink(link.page, link.index, link.url));
         }
     }
-
+    
     export({
         fileName = 'dummy',
         pathToExport = __dirname,
-        normalized = false,
+        removeProtocol = false,
+        removeProtocolAndPath = false,
         uniqueValues = false,
         sorted = false,
         onlyUrls = false,
     } = {}) {
-        let links = this.getLinks({ normalized, uniqueValues, sorted, onlyUrls });
-
+        let links = this.getLinks({ removeProtocol, removeProtocolAndPath, uniqueValues, sorted, onlyUrls });
+        
         let plainTextFile = JSON.stringify(links)
-            .replace(/\,/g, '\r\n')
-            .replace(/\[/g, '')
-            .replace(/\]/g, '')
+        .replace(/\,/g, '\r\n')
+        .replace(/\[/g, '')
+        .replace(/\]/g, '')
             .replace(/\{/g, '')
             .replace(/\}/g, '')
             .replace(/\"/g, '');
