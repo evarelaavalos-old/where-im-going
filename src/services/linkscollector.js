@@ -116,8 +116,13 @@ class LinksCollectorService {
         }
         
         if (sorted) {
-            links.sort((firstEl, secondEl) => firstEl.url < secondEl.url);
+            links.sort((firstEl, secondEl) => {
+                if (firstEl.url > secondEl.url) return 1;
+                if (firstEl.url < secondEl.url) return -1;
+                /* else */ return 0;
+            })
         }
+        
         
         if (onlyUrls) {
             links = links.map(link => link.url);
