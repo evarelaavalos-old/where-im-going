@@ -1,4 +1,4 @@
-const form = document.getElementById('form');
+const searchForm = document.getElementById('search-form');
 
 function hasValue(input) {
     if (input.value.trim() === "") {
@@ -27,20 +27,21 @@ function getParsedSearch(input) {
     return input.value.replaceAll(' ', '-');
 }
 
-form.addEventListener('submit', (event) => {
+searchForm.addEventListener('submit', (event) => {
     // stop from submission
     event.preventDefault();
 
     // validate the form
-    let isValidSearch = validateSearch(form.elements["search"]);
+    let isValidSearch = validateSearch(searchForm.elements["search-form__input"]);
     console.log(isValidSearch);
 
     // if valid, submit the form.
     if (isValidSearch) {
-        let search = getParsedSearch(form.elements["search"]);
+        const ROUTE = '/api/links/';
+        let search = getParsedSearch(searchForm.elements["search-form__input"]);
         
-        event.target.action += search;
+        event.target.action = ROUTE + search;
         console.log(`GET request at ${event.target.action}`);
-        form.submit();
+        searchForm.submit();
     }
 })
