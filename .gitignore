@@ -130,3 +130,5 @@ dist
 
 # Puppeteer Screenshots Folder
 temp/
+
+.vscode

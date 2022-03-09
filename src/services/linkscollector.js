@@ -128,6 +128,8 @@ class LinksCollectorService {
             links = links.map(link => link.url);
         }
         
+        // TODO add an instance to lowercase
+
         return links;
     }
     
