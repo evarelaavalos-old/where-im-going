@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://kit.fontawesome.com/50439f7f50.js" crossorigin="anonymous"></script>
+    <title>Where I'm Going?</title>
+</head>
+
+<body>
+    <main>
+        <h1>Where I'm Going?</h1>
+        <form id="search-form" method="get" action="/api/links/">
+            <input id="search-form__input" type="text" placeholder="Search" autocomplete="off">
+            <button id="search-form__submit-button" type="submit">Search in Google</button>
+            
+            <div class="optional-settings">
+                <div class="optional-settings__toggle">
+                    <i class="fas fa-angle-right"></i>
+                    <p>Optional Settings</p>
+                </div>
+                <div class="optional-settings__items">
+                    <div class="item">
+                        <input type="number" name="pages" min="1" max="10" value="5">
+                        Pages to search
+                    </div>
+                    <div class="item">
+                        <input type="checkbox" name="rmprotocol">
+                        Remove protocol: http or https
+                    </div>
+                    <div class="item">
+                        <input type="checkbox" name="rmprotocolandpath">
+                        Remove protocol and path
+                    </div>
+                    <div class="item">
+                        <input type="checkbox" name="unique">
+                        Get unique values
+                    </div>
+                    <div class="item">
+                        <input type="checkbox" name="sort">
+                        Sort by URL
+                    </div>
+                    <div class="item">
+                        <input type="checkbox" name="onlyurls">
+                        Get only the URLs
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
